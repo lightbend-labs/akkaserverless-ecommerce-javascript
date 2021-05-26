@@ -101,12 +101,6 @@ message GetOrderHistory {
  */ 
 service OrderService {
     /**
-     * The entity type determines what kind of prefix entities get
-     * when persisted
-     */
-    option (akkaserverless.service).entity.type = ".persistence.Order";
-
-    /**
      * The AddOrder method is called when a new order is added to the 
      * system. The HTTP annotation makes this operation available over HTTP 
      * on the mentioned URL. The response is the newly added order.

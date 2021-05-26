@@ -81,12 +81,6 @@ message AddOrder {
  */ 
 service UserService {
     /**
-     * The entity type determines what kind of prefix entities get
-     * when persisted
-     */
-     option (akkaserverless.service).entity.type = ".persistence.User";
-
-    /**
      * The AddUser method is called when a new user is added to the 
      * system. The HTTP annotation makes this operation available over HTTP 
      * on the mentioned URL. The response is the newly added user.

@@ -82,12 +82,6 @@ message Stock {
  */ 
 service InventoryService {
     /**
-     * The entity type determines what kind of prefix entities get
-     * when persisted
-     */
-    option (akkaserverless.service).entity.type = ".persistence.Product";
-
-    /**
      * The ReceiveProduct method is called when a new product is added to the 
      * warehouse. The HTTP annotation makes this operation available over HTTP 
      * on the mentioned URL. The response is the newly added product.

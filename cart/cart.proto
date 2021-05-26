@@ -102,12 +102,6 @@ message Cart {
  */ 
 service CartService {
     /**
-     * The entity type determines what kind of prefix entities get
-     * when persisted
-     */
-    option (akkaserverless.service).entity.type = ".persistence.Cart";
-
-    /**
      * The AddItem method is called when a new item is added to the cart.
      * The HTTP annotation makes this operation available over HTTP on the
      * mentioned URL. The response is an empty message.
