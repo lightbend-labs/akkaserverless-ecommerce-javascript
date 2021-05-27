@@ -101,6 +101,15 @@ message GetOrderHistory {
  */ 
 service OrderService {
     /**
+     * The SERVICE_TYPE_ENTITY lets Akka Serverless know this service implements
+     * an entity
+     */
+    option (akkaserverless.service) = {
+      type: SERVICE_TYPE_ENTITY
+      component: ".domain.Orders"
+    };
+
+    /**
      * The AddOrder method is called when a new order is added to the 
      * system. The HTTP annotation makes this operation available over HTTP 
      * on the mentioned URL. The response is the newly added order.

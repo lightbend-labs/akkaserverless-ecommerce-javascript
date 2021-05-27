@@ -81,6 +81,15 @@ message AddOrder {
  */ 
 service UserService {
     /**
+     * The SERVICE_TYPE_ENTITY lets Akka Serverless know this service implements
+     * an entity
+     */
+    option (akkaserverless.service) = {
+      type: SERVICE_TYPE_ENTITY
+      component: ".domain.Users"
+    };
+
+    /**
      * The AddUser method is called when a new user is added to the 
      * system. The HTTP annotation makes this operation available over HTTP 
      * on the mentioned URL. The response is the newly added user.

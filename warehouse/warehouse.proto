@@ -82,6 +82,15 @@ message Stock {
  */ 
 service InventoryService {
     /**
+     * The SERVICE_TYPE_ENTITY lets Akka Serverless know this service implements
+     * an entity
+     */
+    option (akkaserverless.service) = {
+      type: SERVICE_TYPE_ENTITY
+      component: ".domain.Warehouse"
+    };
+
+    /**
      * The ReceiveProduct method is called when a new product is added to the 
      * warehouse. The HTTP annotation makes this operation available over HTTP 
      * on the mentioned URL. The response is the newly added product.

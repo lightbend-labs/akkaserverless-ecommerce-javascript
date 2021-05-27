@@ -102,6 +102,15 @@ message Cart {
  */ 
 service CartService {
     /**
+     * The SERVICE_TYPE_ENTITY lets Akka Serverless know this service implements
+     * an entity
+     */
+    option (akkaserverless.service) = {
+      type: SERVICE_TYPE_ENTITY
+      component: ".domain.ShoppingCart"
+    };
+
+    /**
      * The AddItem method is called when a new item is added to the cart.
      * The HTTP annotation makes this operation available over HTTP on the
      * mentioned URL. The response is an empty message.

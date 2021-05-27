@@ -34,6 +34,25 @@ syntax = "proto3";
 package ecommerce.persistence;
 
 /**
+ * Imports allow you to use definitions from other protobuf files. In
+ * this case:
+ * akkaserverless/annotations.proto contains definitions
+ * to work with Akka Serverless.
+ */
+import "akkaserverless/annotations.proto";
+
+/**
+ * This section describes how this domain relates to an event sourced entity
+ */
+option (akkaserverless.file).event_sourced_entity = {
+  name: "ShoppingCart"
+  entity_type: "cart"
+  state: "Cart"
+  events: "ItemAdded"
+  events: "ItemRemoved"
+};
+
+/**
  * The ItemAdded message is the event that is sent
  * when an item is added to the shopping cart
  */

@@ -32,6 +32,25 @@
   * repository and the persistence package is used for all domain objects
   */
  package ecommerce.persistence;
+
+/**
+ * Imports allow you to use definitions from other protobuf files. In
+ * this case:
+ * akkaserverless/annotations.proto contains definitions
+ * to work with Akka Serverless.
+ */
+import "akkaserverless/annotations.proto";
+
+/**
+ * This section describes how this domain relates to an event sourced entity
+ */
+option (akkaserverless.file).event_sourced_entity = {
+  name: "Product"
+  entity_type: "product"
+  state: "Product"
+  events: "ProductReceived"
+  events: "StockChanged"
+};
  
 /**
  * The Product message is the state that is persisted

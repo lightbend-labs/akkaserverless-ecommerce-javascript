@@ -34,6 +34,17 @@ syntax = "proto3";
 package ecommerce.persistence;
 
 /**
+ * This section describes how this domain relates to an event sourced entity
+ */
+option (akkaserverless.file).event_sourced_entity = {
+  name: "Users"
+  entity_type: "users"
+  state: "User"
+  events: "UserCreated"
+  events: "OrderAdded"
+};
+
+/**
  * The User message is the state that is persisted
  * for the Event Sourced entity
  */
