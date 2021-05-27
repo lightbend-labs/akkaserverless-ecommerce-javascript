@@ -27,10 +27,10 @@ syntax = "proto3";
 
 /**
  * Packages prevent name clashes between protocol messages
- * In this case, the ecommerce package is used for all services in this
+ * In this case, the com.example.shoppingcart package is used for all services in this
  * repository and the persistence package is used for all domain objects
  */
-package ecommerce;
+package com.example.shoppingcart;
 
 /**
  * Imports allow you to use definitions from other protobuf files. In
