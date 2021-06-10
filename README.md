@@ -1,4 +1,4 @@
-# Akka Serverless - eCommerce Example App
+# Akka Serverless - eCommerce Example App 
 
 A JavaScript-based eCommerce example app for [Akka Serverless](https://developer.lightbend.com/docs/akka-serverless/)
 
