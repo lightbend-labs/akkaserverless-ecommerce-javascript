@@ -16,7 +16,7 @@ To help you get started with Akka Serverless, we've built some example apps that
 
 To build and deploy this example application, you'll need to have:
 
-* An [Akka Serverless account](https://docs.cloudstate.com/getting-started/lightbend-account.html)
+* An [Akka Serverless account](https://developer.lightbend.com/docs/akka-serverless/getting-started/lightbend-account.html)
 * Node.js v12 or higher installed
 * The Docker CLI installed
 
