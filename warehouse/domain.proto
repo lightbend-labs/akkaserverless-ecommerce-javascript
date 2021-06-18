@@ -24,14 +24,14 @@
 /**
  * Specify the version of the Protobuf syntax
  */
- syntax = "proto3";
+syntax = "proto3";
 
- /**
-  * Packages prevent name clashes between protocol messages
-  * In this case, the ecommerce package is used for all services in this
-  * repository and the persistence package is used for all domain objects
-  */
- package ecommerce.persistence;
+/**
+ * Packages prevent name clashes between protocol messages
+ * In this case, the ecommerce package is used for all services in this
+ * repository and the persistence package is used for all domain objects
+ */
+package ecommerce.persistence;
 
 /**
  * Imports allow you to use definitions from other protobuf files. In
@@ -45,13 +45,13 @@ import "akkaserverless/annotations.proto";
  * This section describes how this domain relates to an event sourced entity
  */
 option (akkaserverless.file).event_sourced_entity = {
-  name: "Product"
-  entity_type: "product"
-  state: "Product"
-  events: "ProductReceived"
-  events: "StockChanged"
+    name: "Product"
+    entity_type: "product"
+    state: "Product"
+    events: "ProductReceived"
+    events: "StockChanged"
 };
- 
+
 /**
  * The Product message is the state that is persisted
  * for the Event Sourced entity

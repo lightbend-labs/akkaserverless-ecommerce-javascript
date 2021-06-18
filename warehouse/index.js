@@ -15,13 +15,14 @@
  */
 
 import as from '@lightbend/akkaserverless-javascript-sdk';
-import entity from './warehouse.js';
+import entity from './warehouse-backend.js';
+import view from './warehouse-view.js'
 
 /**
- * Create a new Akka Serverless server and bind the entity from
- * warehouse.js to it. The server will listen on port 8080 and 
- * bind to all interfaces
+ * Create a new Akka Serverless server and bind the entity and view
+ * to it. The server will listen on port 8080 and bind to all interfaces
  */
 const server = new as.AkkaServerless();
 server.addComponent(entity);
+server.addComponent(view);
 server.start({bindAddress:'0.0.0.0', bindPort:'8080'});

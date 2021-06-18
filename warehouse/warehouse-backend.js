@@ -29,7 +29,7 @@ const EventSourcedEntity = as.EventSourcedEntity;
  */
 const entity = new EventSourcedEntity(
     ['warehouse.proto', 'domain.proto'],
-    'ecommerce.InventoryService',
+    'ecommerce.InventoryBackendService',
     'inventory',
     {   
         // A snapshot will be persisted every time this many events are emitted.
@@ -54,10 +54,10 @@ const entity = new EventSourcedEntity(
  * Protobuf types are needed so that Akka Serverless knowns how to serialize these objects when 
  * they are persisted.
  */
- const pkg = 'ecommerce.persistence.';
- const ProductReceived = entity.lookupType(pkg + 'ProductReceived');
- const StockChanged = entity.lookupType(pkg + 'StockChanged');
- const Product = entity.lookupType(pkg + 'Product');
+const pkg = 'ecommerce.persistence.';
+const ProductReceived = entity.lookupType(pkg + 'ProductReceived');
+const StockChanged = entity.lookupType(pkg + 'StockChanged');
+const Product = entity.lookupType(pkg + 'Product');
 
 /**
  * Set a callback to create the initial state. This is what is created if there is no snapshot
@@ -88,7 +88,6 @@ entity.setBehavior(inventory => {
     return {
         commandHandlers: {
             ReceiveProduct: receiveProduct,
-            GetProductDetails: getProductDetails,
             UpdateStock: updateStock,
         },
         eventHandlers: {
@@ -128,19 +127,6 @@ function receiveProduct(newProduct, inventoryItem, ctx) {
 
     ctx.emit(pr)
     return newProduct    
-}
-
-/**
- * getProductDetails is the entry point for the API to get product details and returns the current
- * stock (including additional details) of the product requested
- * 
- * @param {*} request contains the productID for which the request is made
- * @param {*} inventoryItem the stock keeping unit (the entity) that contains product details for this request
- * @returns
- */
-function getProductDetails(request, inventoryItem) {
-    console.log(`Getting inventory for ${inventoryItem.id}...`)
-    return inventoryItem
 }
 
 /**
@@ -194,6 +180,7 @@ function productReceived(newProduct, inventoryItem) {
  */
 function stockChanged(stockUpdate, inventoryItem) {
     console.log(`Updating the current stock level of ${inventoryItem.id} to ${inventoryItem.stock + stockUpdate.stock}`)
+    inventoryItem.stock = inventoryItem.stock + stockUpdate.stock
     return inventoryItem
 }
 
