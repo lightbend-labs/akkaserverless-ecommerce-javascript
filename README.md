@@ -17,7 +17,7 @@ To help you get started with Akka Serverless, we've built some example apps that
 To build and deploy this example application, you'll need to have:
 
 * An [Akka Serverless account](https://developer.lightbend.com/docs/akka-serverless/getting-started/lightbend-account.html)
-* Node.js v12 or higher installed
+* Node.js v14 or higher installed
 * The Docker CLI installed
 
 ## Build, Deploy, and Test
@@ -67,7 +67,7 @@ export AKKASLS_PROJECT=<your project>
 
 ## Deploy the services to your Akka Serverless project
 for i in orders users warehouse cart; do
-  akkasls svc deploy $i $DOCKER_REGISTRY/$DOCKER_USER/$i:2.0.0 --project $AKKASLS_PROJECT
+  akkasls services deploy $i $DOCKER_REGISTRY/$DOCKER_USER/$i:2.0.0 --project $AKKASLS_PROJECT
 done
 ```
 
@@ -81,7 +81,7 @@ export AKKASLS_PROJECT=<your project>
 
 ## Expose the services with a public HTTP endpoint
 for i in orders users warehouse cart; do
-  akkasls svc expose $i --enable-cors --project $AKKASLS_PROJECT
+  akkasls services expose $i --enable-cors --project $AKKASLS_PROJECT
 done
 ```
 
@@ -96,8 +96,8 @@ curl --request POST \
   --url https://<your Akka Serverless endpoint>/cart/1/items/add \
   --header 'Content-Type: application/json' \
   --data '{
-	"userId": "1", 
-	"productId": "turkey",
+  "userId": "1", 
+  "productId": "turkey",
   "name": "delicious turkey",
   "quantity": 2
 }'
@@ -110,8 +110,8 @@ curl --request POST \
   --url https://<your Akka Serverless endpoint>/cart/1/items/turkey/remove \
   --header 'Content-Type: application/json' \
   --data '{
-	"userId": "1", 
-	"productId": "turkey"
+  "userId": "1", 
+  "productId": "turkey"
 }'
 ```
 
@@ -122,7 +122,7 @@ curl --request GET \
   --url https://<your Akka Serverless endpoint>/carts/1 \
   --header 'Content-Type: application/json' \
   --data '{
-	"userId": "1", 
+  "userId": "1", 
 }'
 ```
 
@@ -133,7 +133,7 @@ curl --request GET \
   --url https://<your Akka Serverless endpoint>/carts/1/items \
   --header 'Content-Type: application/json' \
   --data '{
-	"user_id": "1", 
+  "user_id": "1", 
 }'
 ```
 
@@ -146,15 +146,15 @@ curl --request POST \
   --url https://<your Akka Serverless endpoint>/order/1 \
   --header 'Content-Type: application/json' \
   --data '{
-	"userID": "1", 
-	"orderID": "4557", 
-	"items":[
-		{
-			"productID": "turkey", 
-		 	"quantity": 12, 
-			"price": 10.4
-		}
-	]
+  "userID": "1", 
+  "orderID": "4557", 
+  "items":[
+   {
+    "productID": "turkey", 
+     "quantity": 12, 
+    "price": 10.4
+   }
+  ]
 }'
 ```
 
@@ -165,8 +165,8 @@ curl --request GET \
   --url https://<your Akka Serverless endpoint>/order/1 \
   --header 'Content-Type: application/json' \
   --data '{
-	"userID": "1",
-	"orderID": "4557"
+  "userID": "1",
+  "orderID": "4557"
 }'
 ```
 
@@ -186,10 +186,10 @@ curl --request POST \
   --url https://<your Akka Serverless endpoint>/user/1 \
   --header 'Content-Type: application/json' \
   --data '{
-	"id": "1",
-	"name": "retgits",
-	"emailAddress": "retgits@example.com",
-	"orderID":[]
+  "id": "1",
+  "name": "retgits",
+  "emailAddress": "retgits@example.com",
+  "orderID":[]
 }'
 ```
 
@@ -207,11 +207,10 @@ curl --request POST \
   --url https://<your Akka Serverless endpoint>/user/1/order \
   --header 'Content-Type: application/json' \
   --data '{
-	"id": "1",
-	"orderID": "1234"
+  "id": "1",
+  "orderID": "1234"
 }'
 ```
-
 
 #### Warehouse
 
@@ -270,7 +269,7 @@ docker network create -d bridge akkasls
 docker run -d --name userfunction --hostname userfunction --network akkasls $DOCKER_REGISTRY/$DOCKER_USER/$SERVICE:2.0.0
 
 ## Run the proxy
-docker run -d --name proxy --network akkasls -p 9000:9000 --env USER_FUNCTION_HOST=userfunction gcr.io/akkaserverless-public/akkaserverless-proxy:0.7.0-beta.1 -Dconfig.resource=dev-mode.conf -Dcloudstate.proxy.protocol-compatibility-check=false
+docker run -d --name proxy --network akkasls -p 9000:9000 --env USER_FUNCTION_HOST=userfunction gcr.io/akkaserverless-public/akkaserverless-proxy:latest -Dconfig.resource=dev-mode.conf -Dcloudstate.proxy.protocol-compatibility-check=false
 ```
 
 To clean it all up, you can run
