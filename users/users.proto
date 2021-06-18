@@ -25,23 +25,24 @@
  */
 syntax = "proto3";
 
- /**
-  * Packages prevent name clashes between protocol messages
-  * In this case, the ecommerce package is used for all services in this
-  * repository and the persistence package is used for all domain objects
-  */
+/**
+ * Packages prevent name clashes between protocol messages
+ * In this case, the ecommerce package is used for all services in this
+ * repository and the persistence package is used for all domain objects
+ */
 package ecommerce;
- 
- /**
-  * Imports allow you to use definitions from other protobuf files. In
-  * this case:
-  * akkaserverless/annotations.proto contains definitions
-  * to work with Akka Serverless.
-  * google/api/annotations.proto contains definitions to add
-  * HTTP based endpoints
-  */
+
+/**
+ * Imports allow you to use definitions from other protobuf files. In
+ * this case:
+ * akkaserverless/annotations.proto contains definitions
+ * to work with Akka Serverless.
+ * google/api/annotations.proto contains definitions to add
+ * HTTP based endpoints
+ */
 import "akkaserverless/annotations.proto";
 import "google/api/annotations.proto";
+import "domain.proto";
 
 /**
  * The User message represents a single user and is used as response
@@ -75,18 +76,18 @@ message AddOrder {
 }
 
 /**
- * The UserService shows all rpc methods that the User service can handle
- * The names of the rpc methods should match the command handler names in
- * the code.
+ * The UserBackendService shows all rpc methods that the User Backend service
+ * can handle. The names of the rpc methods should match the command handler
+ * names in the code.
  */ 
-service UserService {
+service UserBackendService {
     /**
      * The SERVICE_TYPE_ENTITY lets Akka Serverless know this service implements
      * an entity
      */
     option (akkaserverless.service) = {
-      type: SERVICE_TYPE_ENTITY
-      component: ".domain.Users"
+        type: SERVICE_TYPE_ENTITY
+        component: ".domain.Users"
     };
 
     /**
@@ -102,17 +103,6 @@ service UserService {
     }
 
     /**
-     * The GetUserDetails method is called to get the details of a user in 
-     * the system. The HTTP annotation makes this operation available over HTTP 
-     * on the mentioned URL. The response is the requested user.
-     */
-    rpc GetUserDetails (GetUser) returns (User) {
-        option (google.api.http) = {
-            get: "/user/{id}"
-        };
-    }
-
-    /**
      * The UpdateUserOrders method is called to update the orders a user of the system
      * has made. The HTTP annotation makes this operation available over HTTP 
      * on the mentioned URL. The response is the product with the new order.
@@ -121,6 +111,47 @@ service UserService {
         option (google.api.http) = {
             post: "/user/{id}/order",
             body: "*"
+        };
+    }
+}
+
+/**
+ * The UserFrontendService shows all rpc methods that the User Frontend service
+ * can handle. The names of the rpc methods should match the command handler
+ * names in the code.
+ */ 
+service UserFrontendService {
+    rpc ProcessUserCreated (ecommerce.persistence.UserCreated) returns (ecommerce.persistence.User) {
+        option (akkaserverless.method).eventing.in = {
+            event_sourced_entity: "users"
+        };
+        option (akkaserverless.method).view.update = {
+            table: "users"
+            transform_updates: true
+        };
+    }
+
+    rpc ProcessOrderAdded (ecommerce.persistence.OrderAdded) returns (ecommerce.persistence.User) {
+        option (akkaserverless.method).eventing.in = {
+            event_sourced_entity: "users"
+        };
+        option (akkaserverless.method).view.update = {
+            table: "users"
+            transform_updates: true
+        };
+    }
+
+    /**
+     * The GetUserDetails method is called to get the details of a user in 
+     * the system. The HTTP annotation makes this operation available over HTTP 
+     * on the mentioned URL. The response is the requested user.
+     */
+    rpc GetUserDetails (GetUser) returns (ecommerce.persistence.User) {
+        option (akkaserverless.method).view.query = {
+            query: "SELECT * FROM users WHERE id = :id"
+        };
+        option (google.api.http) = {
+            get: "/user/{id}"
         };
     }
 }

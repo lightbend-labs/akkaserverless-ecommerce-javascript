@@ -17,19 +17,19 @@
 /**
  * This service uses the EventSourced state model in Akka Serverless.
  */
- import as from '@lightbend/akkaserverless-javascript-sdk';
- const EventSourcedEntity = as.EventSourcedEntity;
- 
- /**
-  * Create a new EventSourced entity with parameters
-  * * An array of protobuf files where the entity can find message definitions
-  * * The fully qualified name of the service that provides this entities interface
-  * * The entity type name for all event source entities of this type. This will be prefixed
-  *   onto the entityId when storing the events for this entity.
-  */
+import as from '@lightbend/akkaserverless-javascript-sdk';
+const EventSourcedEntity = as.EventSourcedEntity;
+
+/**
+ * Create a new EventSourced entity with parameters
+ * * An array of protobuf files where the entity can find message definitions
+ * * The fully qualified name of the service that provides this entities interface
+ * * The entity type name for all event source entities of this type. This will be prefixed
+ *   onto the entityId when storing the events for this entity.
+ */
 const entity = new EventSourcedEntity(
     ['users.proto', 'domain.proto'],
-    'ecommerce.UserService',
+    'ecommerce.UserBackendService',
     'users',
     {
         // A snapshot will be persisted every time this many events are emitted.
@@ -54,10 +54,10 @@ const entity = new EventSourcedEntity(
  * Protobuf types are needed so that Akka Serverless knowns how to serialize these objects when 
  * they are persisted.
  */
- const pkg = 'ecommerce.persistence.';
- const UserCreated = entity.lookupType(pkg + 'UserCreated');
- const OrderAdded = entity.lookupType(pkg + 'OrderAdded');
- const User = entity.lookupType(pkg + 'User');
+const pkg = 'ecommerce.persistence.';
+const UserCreated = entity.lookupType(pkg + 'UserCreated');
+const OrderAdded = entity.lookupType(pkg + 'OrderAdded');
+const User = entity.lookupType(pkg + 'User');
 
 /**
  * Set a callback to create the initial state. This is what is created if there is no snapshot
@@ -85,7 +85,6 @@ entity.setBehavior(users => {
     return {
         commandHandlers: {
             AddUser: addUser,
-            GetUserDetails: getUserDetails,
             UpdateUserOrders: updateUserOrders,
         },
         eventHandlers: {
@@ -122,19 +121,6 @@ function addUser(newUser, userInfo, ctx) {
 
     ctx.emit(uc);
     return newUser
-}
-
-/**
- * getUserDetails is the entry point for the API to get user details and returns the current
- * user data
- * 
- * @param {*} request contains the userID for which the request is made
- * @param {*} userInfo the user details (the entity) that contains user information for this request
- * @returns
- */
-function getUserDetails(request, userInfo) {
-    console.log(`Getting details for ${userInfo.id}`)
-    return userInfo
 }
 
 /**

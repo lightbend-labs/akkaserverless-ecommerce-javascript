@@ -26,30 +26,37 @@ const View = as.View;
  * * The fully qualified name of the service that provides this entities interface
  */
 const view = new View(
-    ['warehouse.proto', 'domain.proto'],
-    'ecommerce.InventoryFrontendService',
+    ['users.proto', 'domain.proto'],
+    'ecommerce.UserFrontendService',
     {
-        viewId: "inventory-frontend-view"
+        viewId: "users-frontend-view"
     }
 );
 
 view.setUpdateHandlers({ 
-    ProcessProductReceived: productReceived,
-    ProcessStockChanged: stockChanged
+    ProcessUserCreated: userCreated,
+    ProcessOrderAdded: orderAdded
 });
 
-function productReceived(event, state, context) {
+function userCreated(event, state, context) {
     if(state !== undefined) {
-        console.log(`${state.name} is already in the warehouse...`)
+        console.log(`${state.name} is already a user...`)
         return state
     } else {
-        console.log(`Adding ${event.name} to the warehouse...`)
+        console.log(`Adding ${event.name} as a new user...`)
         return event
     }
 }
 
-function stockChanged(event, state, context) {
-    state.stock = state.stock + event.stock;
+function orderAdded(event, state, context) {
+    console.log(`Updating orders for ${state.id} to add ${event.orderID}`)
+
+    if(state.orderID){
+        state.orderID.push(event.orderID)
+    } else {
+        state.orderID = new Array(event.orderID)
+    }
+
     return state
 }
 
