@@ -4,7 +4,9 @@ A JavaScript-based eCommerce example app for [Akka Serverless](https://developer
 
 Features include:
 
-* Different eventsourced services for `warehouse`, `orders`, `users`, and `cart`
+* Different eventsourced services for `warehouse`, `users`, and `cart`
+* A Value Entity based service for `orders`
+* All services leverage the [`Views`](https://developer.lightbend.com/docs/akka-serverless/javascript/views.html) capability
 * An overview of how the API and domain are separated in different protobuf files
 * Various ways of using the HTTP annotation
 
@@ -44,7 +46,7 @@ for i in orders users warehouse cart; do
   cd $BASE_DIR/$i
   npm install ## run the npm install command
   npm run test ## as a good practice run the unit tests
-  docker build . -t $DOCKER_REGISTRY/$DOCKER_USER/$i:2.0.0
+  docker build . -t $DOCKER_REGISTRY/$DOCKER_USER/$i:3.0.0
 done
 ```
 
@@ -59,7 +61,7 @@ export DOCKER_USER=<your dockerhub username>
 
 ## Push the containers to a container registry
 for i in orders users warehouse cart; do
-  docker push $DOCKER_REGISTRY/$DOCKER_USER/$i:2.0.0
+  docker push $DOCKER_REGISTRY/$DOCKER_USER/$i:3.0.0
 done
 
 ## Set your Akka Serverless project name
@@ -67,7 +69,7 @@ export AKKASLS_PROJECT=<your project>
 
 ## Deploy the services to your Akka Serverless project
 for i in orders users warehouse cart; do
-  akkasls services deploy $i $DOCKER_REGISTRY/$DOCKER_USER/$i:2.0.0 --project $AKKASLS_PROJECT
+  akkasls services deploy $i $DOCKER_REGISTRY/$DOCKER_USER/$i:3.0.0 --project $AKKASLS_PROJECT
 done
 ```
 
@@ -162,19 +164,8 @@ curl --request POST \
 
 ```bash
 curl --request GET \
-  --url https://<your Akka Serverless endpoint>/order/1 \
-  --header 'Content-Type: application/json' \
-  --data '{
-  "userID": "1",
-  "orderID": "4557"
-}'
-```
-
-##### Get All Orders
-
-```bash
-curl --request GET \
-  --url https://<your Akka Serverless endpoint>/order/1/all
+  --url https://<your Akka Serverless endpoint>/order/1/4557 \
+  --header 'Content-Type: application/json'
 ```
 
 #### Users
@@ -266,7 +257,7 @@ export SERVICE= ## this can be one of orders users warehouse cart
 docker network create -d bridge akkasls
 
 ## Run your userfunction
-docker run -d --name userfunction --hostname userfunction --network akkasls $DOCKER_REGISTRY/$DOCKER_USER/$SERVICE:2.0.0
+docker run -d --name userfunction --hostname userfunction --network akkasls $DOCKER_REGISTRY/$DOCKER_USER/$SERVICE:3.0.0
 
 ## Run the proxy
 docker run -d --name proxy --network akkasls -p 9000:9000 --env USER_FUNCTION_HOST=userfunction gcr.io/akkaserverless-public/akkaserverless-proxy:latest -Dconfig.resource=dev-mode.conf -Dcloudstate.proxy.protocol-compatibility-check=false

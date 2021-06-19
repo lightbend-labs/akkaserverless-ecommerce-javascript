@@ -34,23 +34,12 @@ syntax = "proto3";
 package ecommerce.persistence;
 
 /**
- * This section describes how this domain relates to an event sourced entity
+ * Imports allow you to use definitions from other protobuf files. In
+ * this case:
+ * akkaserverless/annotations.proto contains definitions
+ * to work with Akka Serverless.
  */
-option (akkaserverless.file).event_sourced_entity = {
-  name: "Orders"
-  entity_type: "orders"
-  state: "Order"
-  events: "OrderAdded"
-};
-
-/**
- * The Order message is the state that is persisted
- * for the Event Sourced entity
- */
- message Orders {
-    string userID = 1;
-    repeated Order orders = 2;
-}
+import "akkaserverless/annotations.proto";
 
 /**
  * The Order message represents a single Order and is used as response
@@ -68,14 +57,4 @@ message OrderItem {
     string productID = 1;
     int32 quantity = 2;
     float price = 3;
-}
-
-/**
- * The OrderAdded message is the event that is sent
- * when an order is added to the system
- */
-message OrderAdded {
-    string userID = 1;
-    string orderID = 2;
-    repeated OrderItem items = 3;
 }
