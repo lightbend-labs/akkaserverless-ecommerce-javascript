@@ -42,20 +42,10 @@ package ecommerce;
   */
 import "akkaserverless/annotations.proto";
 import "google/api/annotations.proto";
+import "domain.proto";
 
 /**
- * The AllOrders message represents all orders for a user and is used as response
- * for the GetAllOrders method.
- * The entity key is used by Akka Serverless to find the correct entity
- */
-message AllOrders {
-    string userID = 1 [(akkaserverless.field).entity_key = true];
-    repeated Order orders = 2;
-}
-
-/**
- * The Order message represents a single Order and is used as response
- * for the GetOrderDetails method.
+ * The Order message represents a single Order
  * The entity key is used by Akka Serverless to find the correct entity
  */
 message Order {
@@ -95,18 +85,18 @@ message GetOrderHistory {
 }
 
 /**
- * The OrderService shows all rpc methods that the Order service can handle
- * The names of the rpc methods should match the command handler names in
- * the code.
+ * The OrderBackendService shows all rpc methods that the Order Backend service
+ * can handle. The names of the rpc methods should match the command handler names
+ * in the code.
  */ 
-service OrderService {
+service OrderBackendService {
     /**
      * The SERVICE_TYPE_ENTITY lets Akka Serverless know this service implements
      * an entity
      */
     option (akkaserverless.service) = {
-      type: SERVICE_TYPE_ENTITY
-      component: ".domain.Orders"
+        type: SERVICE_TYPE_ENTITY
+        component: ".domain.Orders"
     };
 
     /**
@@ -120,27 +110,34 @@ service OrderService {
             body: "*"
         };
     }
+}
+
+/**
+ * The OrderFrontendService shows all rpc methods that the Order Frontend service
+ * can handle. The names of the rpc methods should match the command handler names
+ * in the code.
+ */ 
+service OrderFrontendService {
+    rpc ProcessOrderAdded (ecommerce.persistence.Order) returns (ecommerce.persistence.Order) {
+        option (akkaserverless.method).eventing.in = {
+            value_entity: "orders"
+        };
+        option (akkaserverless.method).view.update = {
+            table: "orders"
+        };
+    }
 
     /**
      * The GetOrderDetails method is called to get an order of a user in 
      * the system. The HTTP annotation makes this operation available over HTTP 
      * on the mentioned URL. The response is the requested user.
      */
-    rpc GetOrderDetails (GetOrder) returns (Order) {
-        option (google.api.http) = {
-            get: "/order/{userID}",
-            body: "*"
+    rpc GetOrderDetails (GetOrder) returns (ecommerce.persistence.Order) {
+        option (akkaserverless.method).view.query = {
+            query: "SELECT * FROM orders WHERE userID = :userID AND orderID = :orderID"
         };
-    }
-
-    /**
-     * The GetAllOrders method is called to get the orders of a user in 
-     * the system. The HTTP annotation makes this operation available over HTTP 
-     * on the mentioned URL. The response is the requested user.
-     */
-    rpc GetAllOrders (GetOrderHistory) returns (AllOrders) {
         option (google.api.http) = {
-            get: "/order/{userID}/all"
+            get: "/order/{userID}/{orderID}",
         };
     }
 }

@@ -42,6 +42,7 @@ package ecommerce;
  */
 import "akkaserverless/annotations.proto";
 import "google/api/annotations.proto";
+import "domain.proto";
 
 /**
  * The Product message represents a single product and is used as response
@@ -76,18 +77,18 @@ message Stock {
 }
 
 /**
- * The InventoryService shows all rpc methods that the Inventory service can handle
- * The names of the rpc methods should match the command handler names in
+ * The InventoryBackendService shows all rpc methods that the Inventory Backend service
+ * can handle. the names of the rpc methods should match the command handler names in
  * the code.
  */ 
-service InventoryService {
+service InventoryBackendService {
     /**
      * The SERVICE_TYPE_ENTITY lets Akka Serverless know this service implements
      * an entity
      */
     option (akkaserverless.service) = {
-      type: SERVICE_TYPE_ENTITY
-      component: ".domain.Warehouse"
+        type: SERVICE_TYPE_ENTITY
+        component: ".domain.Warehouse"
     };
 
     /**
@@ -103,17 +104,6 @@ service InventoryService {
     }
 
     /**
-     * The GetProductDetails method is called to get the details of a product in 
-     * the warehouse. The HTTP annotation makes this operation available over HTTP 
-     * on the mentioned URL. The response is the requested product.
-     */
-    rpc GetProductDetails (GetProduct) returns (Product) {
-        option (google.api.http) = {
-            get: "/warehouse/{id}"
-        };
-    }
-
-    /**
      * The UpdateStock method is called to update the stock of a product in 
      * the warehouse. The HTTP annotation makes this operation available over HTTP 
      * on the mentioned URL. The response is the product with the new stock.
@@ -122,6 +112,47 @@ service InventoryService {
         option (google.api.http) = {
             post: "/warehouse/{id}/stock",
             body: "*"
+        };
+    }
+}
+
+/**
+ * The InventoryFrontendService shows all rpc methods that the Inventory Frontend service
+ * can handle. the names of the rpc methods should match the command handler names in
+ * the code.
+ */ 
+service InventoryFrontendService {
+    rpc ProcessProductReceived(ecommerce.persistence.ProductReceived) returns (ecommerce.persistence.Product) {
+        option (akkaserverless.method).eventing.in = {
+            event_sourced_entity: "inventory"
+        };
+        option (akkaserverless.method).view.update = {
+            table: "products"
+            transform_updates: true
+        };
+    }
+
+    rpc ProcessStockChanged(ecommerce.persistence.StockChanged) returns (ecommerce.persistence.Product) {
+        option (akkaserverless.method).eventing.in = {
+            event_sourced_entity: "inventory"
+        };
+        option (akkaserverless.method).view.update = {
+            table: "products"
+            transform_updates: true
+        };
+    }
+
+    /**
+     * The GetProductDetails method is called to get the details of a product in 
+     * the warehouse. The HTTP annotation makes this operation available over HTTP 
+     * on the mentioned URL. The response is the requested product.
+     */
+    rpc GetProductDetails (GetProduct) returns (ecommerce.persistence.Product) {
+        option (akkaserverless.method).view.query = {
+            query: "SELECT * FROM products WHERE id = :id"
+        };
+        option (google.api.http) = {
+            get: "/warehouse/{id}"
         };
     }
 }
