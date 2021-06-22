@@ -98,7 +98,7 @@ curl --request POST \
   --url https://<your Akka Serverless endpoint>/cart/1/items/add \
   --header 'Content-Type: application/json' \
   --data '{
-  "userId": "1", 
+  "userId": "1",
   "productId": "turkey",
   "name": "delicious turkey",
   "quantity": 2
@@ -112,7 +112,7 @@ curl --request POST \
   --url https://<your Akka Serverless endpoint>/cart/1/items/turkey/remove \
   --header 'Content-Type: application/json' \
   --data '{
-  "userId": "1", 
+  "userId": "1",
   "productId": "turkey"
 }'
 ```
@@ -124,18 +124,7 @@ curl --request GET \
   --url https://<your Akka Serverless endpoint>/carts/1 \
   --header 'Content-Type: application/json' \
   --data '{
-  "userId": "1", 
-}'
-```
-
-or
-
-```bash
-curl --request GET \
-  --url https://<your Akka Serverless endpoint>/carts/1/items \
-  --header 'Content-Type: application/json' \
-  --data '{
-  "user_id": "1", 
+  "userId": "1",
 }'
 ```
 
@@ -148,12 +137,12 @@ curl --request POST \
   --url https://<your Akka Serverless endpoint>/order/1 \
   --header 'Content-Type: application/json' \
   --data '{
-  "userID": "1", 
-  "orderID": "4557", 
+  "userID": "1",
+  "orderID": "4557",
   "items":[
    {
-    "productID": "turkey", 
-     "quantity": 12, 
+    "productID": "turkey",
+     "quantity": 12,
     "price": 10.4
    }
   ]
@@ -251,7 +240,7 @@ To test your services, you'll need to run the proxy on your own machine and use 
 ## Set your dockerhub username
 export DOCKER_REGISTRY=docker.io
 export DOCKER_USER=<your dockerhub username>
-export SERVICE= ## this can be one of orders users warehouse cart 
+export SERVICE= ## this can be one of orders users warehouse cart
 
 ## Create a docker bridged network
 docker network create -d bridge akkasls
