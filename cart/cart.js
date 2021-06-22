@@ -29,7 +29,7 @@ const EventSourcedEntity = as.EventSourcedEntity;
  */
 const entity = new EventSourcedEntity(
   ['cart.proto', 'domain.proto'],
-  'ecommerce.CartService',
+  'com.example.shoppingcart.CartService',
   'cart',
   {
     // A snapshot will be persisted every time this many events are emitted.
